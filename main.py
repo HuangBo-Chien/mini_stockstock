@@ -4,6 +4,8 @@ import re
 import pandas as pd
 from datetime import date
 
+YEAR_CONST = 1911
+
 my_session = requests.session()
 my_session.headers.update({
     "User-Agent": r"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
@@ -39,7 +41,7 @@ def query_mops_info(query_date: date) -> dict:
     MOPS_URL = "https://mops.twse.com.tw/mops/api/t05st02"    
     res = my_session.post(
         url = MOPS_URL,
-        json = {"year": str(query_date.year),
+        json = {"year": str(query_date.year - YEAR_CONST),
                 "month": str(query_date.month),
                 "day": str(query_date.day)},
         allow_redirects = True
@@ -53,3 +55,4 @@ if __name__ == "__main__":
     
     response_dict = query_mops_info(date.today())
     info_df = parse_mops_response(response_dict)
+    info_df.to_csv("test.csv", index = False)
