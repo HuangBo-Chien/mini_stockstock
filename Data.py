@@ -39,10 +39,10 @@ def getData(StockID: str, Start_Date: datetime.date, End_Date: datetime.date, sa
 def getBrokerInfo():
     """
     Download broker infomation from TWSE
-    (https://www.twse.com.tw/rwd/zh/brokerService/brokerServiceAudit?showType=main&response=json)
+    ### Reference:
+    https://www.twse.com.tw/zh/products/broker/infomation/list.html
+    https://www.twse.com.tw/zh/products/broker/infomation/detail.html?1230
     """
-    # https://www.twse.com.tw/zh/products/broker/infomation/list.html
-    # https://www.twse.com.tw/zh/products/broker/infomation/detail.html?1230
 
     def Fubon_BrokerID_conversion(BrokerID: str) -> str:
         """
