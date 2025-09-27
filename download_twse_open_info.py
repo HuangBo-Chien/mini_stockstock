@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 from datetime import date
+from time import sleep
 
 YEAR_CONST = 1911
 
@@ -50,9 +51,27 @@ def query_mops_info(query_date: date) -> dict:
         return res.json()
     else:
         raise requests.RequestException()
+    
+def export_mops_info_in_this_date_range(date_start: date, date_end: date) -> pd.DataFrame:
+    delta = date_end - date_start
+    all_info_df_list = []
+    for ii in range(delta.days + 1):
+        one_date = date_start + pd.Timedelta(days = ii)
+        try:
+            print(f"Processing {one_date}")
+            response_dict = query_mops_info(one_date)
+            info_df = parse_mops_response(response_dict)
+            all_info_df_list.append(info_df)
+        except Exception as e:
+            print(f"Error on {one_date}, {e}")
+        sleep(10) # avoid too frequent access
+    all_info_df = pd.concat(all_info_df_list, ignore_index = True)
+    return all_info_df
 
 if __name__ == "__main__":
     
-    response_dict = query_mops_info(date.today())
-    info_df = parse_mops_response(response_dict)
-    info_df.to_csv("test.csv", index = False)
+    # response_dict = query_mops_info(date.today())
+    # info_df = parse_mops_response(response_dict)
+    # info_df.to_csv(f"test_{date.today()}.csv", index = False)
+
+    export_mops_info_in_this_date_range(date(2024, 1, 1), date(2024, 6, 30)).to_csv("mops_2024_H1.csv", index = False)
